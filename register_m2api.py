@@ -254,7 +254,7 @@ if __name__ == "__main__":
     results = []
     for i in range(args.count):
         if i > 0:
-            delay = 5
+            delay = 12
             log(f"\n  等待 {delay}s 避免限速...")
             time.sleep(delay)
         log(f"\n{'#'*50}")
