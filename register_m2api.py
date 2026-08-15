@@ -210,10 +210,13 @@ def main():
             break
 
     if not api_key:
-        # Try flash/alert message area
-        flashes = re.findall(r'abai_sk_live_([a-zA-Z0-9_\-]{40,60})', resp.text)
-        if flashes:
-            api_key = f"abai_sk_live_{flashes[0]}"
+        # Try flash/alert message area — exclude truncated keys ending with …
+        flashes = re.findall(r'abai_sk_live_([a-zA-Z0-9_\-]{43,60})', resp.text)
+        for f in flashes:
+            # Skip truncated versions (followed by … / &hellip;)
+            if not re.search(rf'abai_sk_live_{re.escape(f)}[^a-zA-Z0-9_\-]*[…&]', resp.text):
+                api_key = f"abai_sk_live_{f}"
+                break
 
     # Step 6: 结果
     log("[6/6] 完成!")
@@ -251,7 +254,7 @@ if __name__ == "__main__":
     results = []
     for i in range(args.count):
         if i > 0:
-            delay = 5
+            delay = 12
             log(f"\n  等待 {delay}s 避免限速...")
             time.sleep(delay)
         log(f"\n{'#'*50}")
